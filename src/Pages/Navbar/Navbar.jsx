@@ -1,11 +1,21 @@
 import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo.svg";
+import { useContext } from "react";
+import { AuthContext } from "../../Providers/AuthProviders";
 
 const Navbar = () => {
 
+    const { user, signOutUser } = useContext(AuthContext);
+
+    const handleSignOut = () => {
+        signOutUser()
+            .then(data => console.log(data))
+            .catch(error => console.log(error))
+    }
+
     const navItems = <>
-        <li><NavLink>Home</NavLink></li>
-        <li><NavLink>About</NavLink></li>
+        <li><NavLink to="/">Home</NavLink></li>
+        <li><NavLink to="/about">About</NavLink></li>
         <li><NavLink to="/login">Login</NavLink></li>
     </>
 
@@ -31,6 +41,20 @@ const Navbar = () => {
             </div>
             <div className="navbar-end">
                 <button className="btn btn-outline btn-warning">Appointment</button>
+            </div>
+            <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar tooltip" data-tip={user?.displayName}>
+                    <div className="w-10 rounded-full">
+                        <img alt="Tailwind CSS Navbar component" src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                    </div>
+                </div>
+                <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    {
+                        user ?
+                            <li><h3 onClick={handleSignOut}>Logout</h3></li> :
+                            <li><Link to="/login">Login</Link></li>
+                    }
+                </ul>
             </div>
         </div>
     );

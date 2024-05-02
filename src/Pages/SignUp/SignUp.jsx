@@ -1,27 +1,36 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import loginImg from "../../assets/images/login/login.svg";
 import { useContext } from "react";
 import { AuthContext } from "../../Providers/AuthProviders";
+import { updateProfile } from "firebase/auth";
 
 
 const SignUp = () => {
 
-    const { signUpUser } = useContext(AuthContext);
+    const { signUpUser, setUser } = useContext(AuthContext);
+    const navigate = useNavigate()
 
     const handleSignUp = (event) => {
         event.preventDefault()
         const form = event.target;
-        // const name = form.name.value;
+        const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
         // console.log(name, email, password);
         signUpUser(email, password)
             .then(data => {
-                console.log(data.user);
+                const user = data.user;
+                updateProfile(user, {
+                    displayName: name
+                })
+                    .then(() => {
+                        setUser({ displayName: name })
+                        navigate("/")
+                    })
             })
             .catch(error => console.log(error))
     }
-    
+
     return (
         <div className="grid md:grid-cols-2 md:w-4/6 mx-auto mt-32">
             <div className="col-span-1">
